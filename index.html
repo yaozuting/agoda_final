@@ -50,62 +50,55 @@
                     <div class="price-input"> 
                         <div class="price-field"> 
                             <span>Min</span> 
-                            <input type="number" 
-                                class="min-input" 
-                                value="0"> 
+                            <input type="number" class="min-input" value="0"> 
                         </div> 
                         <div class="price-field"> 
                             <span>Max</span> 
-                            <input type="number" 
-                                class="max-input" 
-                                value="8500"> 
+                            <input type="number" class="max-input" value="8500"> 
                         </div> 
                     </div> 
                     <div class="slider-container"> 
-                        <div class="price-slider"> 
-                        </div> 
+                        <div class="price-slider"></div> 
                     </div> 
                 </div> 
-    
-                <!-- Slider -->
                 <div class="range-input"> 
-                    <input type="range" 
-                        class="min-range" 
-                        min="0" 
-                        max="100000" 
-                        value="0" 
-                        step="1"> 
-                    <input type="range" 
-                        class="max-range" 
-                        min="0" 
-                        max="100000" 
-                        value="8500" 
-                        step="1"> 
+                    <input type="range" class="min-range" min="0" max="100000" value="0" step="1"> 
+                    <input type="range" class="max-range" min="0" max="100000" value="8500" step="1"> 
                 </div> 
             </div>
             <div class="filter_sidebar">
                 <h3>Facilities</h3>
                 <input type="checkbox" id="wifi" name="facilities" value="Free Wi-Fi">
                 <label for="wifi"> Free Wi-Fi</label><br>
-                <input type="checkbox" id="wifi" name="facilities" value="Pets allowed">
-                <label for="wifi"> Pets allowed</label><br>
-                <input type="checkbox" id="wifi" name="facilities" value="Luggage storage">
-                <label for="wifi"> Luggage storage</label><br>
-                <input type="checkbox" id="wifi" name="facilities" value="Airport transfer">
-                <label for="wifi"> Airport transfer</label><br>
-                <!-- Add more checkboxes for other facilities -->
+                <input type="checkbox" id="pets" name="facilities" value="Pets allowed">
+                <label for="pets"> Pets allowed</label><br>
+                <input type="checkbox" id="luggage" name="facilities" value="Luggage storage">
+                <label for="luggage"> Luggage storage</label><br>
+                <input type="checkbox" id="airport" name="facilities" value="Airport transfer">
+                <label for="airport"> Airport transfer</label><br>
+            </div>
+            <div class="filter_sidebar">
+                <h3>Star Rating</h3>
+                <input type="checkbox" id="star-1" name="star-rating" value="1">
+                <label for="star-1"> 1 Star</label><br>
+                <input type="checkbox" id="star-2" name="star-rating" value="2">
+                <label for="star-2"> 2 Stars</label><br>
+                <input type="checkbox" id="star-3" name="star-rating" value="3">
+                <label for="star-3"> 3 Stars</label><br>
+                <input type="checkbox" id="star-4" name="star-rating" value="4">
+                <label for="star-4"> 4 Stars</label><br>
+                <input type="checkbox" id="star-5" name="star-rating" value="5">
+                <label for="star-5"> 5 Stars</label><br>
             </div>
             
         </div>
         <div class="content">
             <div id="bubble-chart" style="width:100%;height:600px;"></div>
             <h1 id="selected-location"></h1>
-            <div id="hotels-list">
-
-            </div>
+            <div id="hotels-list"></div>
             <div id="hyperlink" style="margin-top: 20px;"></div>
         </div>
     </div>
-    <script src="script.js"></script> <!-- Include your JavaScript file here -->
+    <script src="script.js"></script>
 </body>
 </html>
