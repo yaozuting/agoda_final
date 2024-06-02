@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const minPrice = parseFloat(document.querySelector(".min-input").value);
         const maxPrice = parseFloat(document.querySelector(".max-input").value);
         const selectedFacilities = Array.from(document.querySelectorAll('input[name="facilities"]:checked')).map(input => input.value);
+        const selectedStarRatings = Array.from(document.querySelectorAll('input[name="star-rating"]:checked')).map(input => input.value);
    
-    
         data = data.filter(hotel => {
             const price = parseFloat(hotel.Price);
             
@@ -52,16 +52,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 return false;
             }
         
-           // Check if the hotel facilities include selected facilities
+            // Check if the hotel facilities include selected facilities
             for (const facility of selectedFacilities) {
-                // Convert both facility and facilities to lowercase for case-insensitive comparison
                 const lowerCaseFacility = facility.toLowerCase();
                 console.log("lowerCaseFacility", lowerCaseFacility);
                 
-                // Split the facilities string into individual facilities
                 const individualFacilities = facilities.split(',');
                 
-                // Check if any part of the lowercased facilities string includes the lowercased selected facility
                 let facilityFound = false;
                 for (const hotelFacility of individualFacilities) {
                     if (hotelFacility.toLowerCase().includes(lowerCaseFacility)) {
@@ -70,18 +67,22 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
         
-                // If the selected facility is not found in any part of the hotel facilities, return false
                 if (!facilityFound) {
                     return false;
                 }
             }
 
-        
+            // Check if the hotel's star rating is in the selected star ratings
+            const starRating = parseFloat(hotel['Star Rating']);
+            if (selectedStarRatings.length > 0 && !selectedStarRatings.includes(starRating.toString())) {
+                return false;
+            }
+
             return true;
         });
         
         console.log(data);
-        return data
+        return data;
     }
     
 
@@ -226,160 +227,86 @@ document.addEventListener("DOMContentLoaded", function() {
             let maxVal = parseInt(rangeInputs[1].value);
             if ((maxVal - minVal) < priceGap) {
                 if (e.target.className === "min-range") {
-                    rangeInputs[0].value= maxVal - priceGap;
+                    rangeInputs[0].value = maxVal - priceGap;
                 } else {
-                rangeInputs[1].value = minVal + priceGap;
-                }
-                } else {
-                priceInputs[0].value = minVal;
-                priceInputs[1].value = maxVal;
-                }
-                filterData();
-                });
-                });
-                priceInputs.forEach(input => {
-                    input.addEventListener("input", e => {
-                        let minPrice = parseInt(priceInputs[0].value);
-                        let maxPrice = parseInt(priceInputs[1].value);
-                        if ((maxPrice - minPrice >= priceGap) && maxPrice <= 10000) {
-                            if (e.target.className === "min-input") {
-                                rangeInputs[0].value = minPrice;
-                            } else {
-                                rangeInputs[1].value = maxPrice;
-                            }
-                            filterData();
-                        }
-                    });
-                });
-                
-                function filterData() {
-                    const selectedCity = document.getElementById('place-select').value;
-                    const minPrice = parseFloat(priceInputs[0].value);
-                    const maxPrice = parseFloat(priceInputs[1].value);
-                
-                    // No need to filter the data, pass the entire data array to createChart
-                    createChart(data);
-                }
-                
-                function createChart(filteredData) {
-                    const prices = [];
-                    const scores = [];
-                    const reviews = [];
-                    const hotels = [];
-                    const hyperlinks = [];
-                
-                    filteredData.forEach(item => {
-                        prices.push(parseFloat(item.Price));
-                        scores.push(parseFloat(item.Review));
-                        reviews.push(parseInt(item['Review Number']));
-                        hotels.push(item['Hotel Name']);
-                        hyperlinks.push(item.hyperlink);
-                    });
-                
-                    const trace = {
-                        x: prices,
-                        y: scores,
-                        text: hotels,
-                        mode: 'markers',
-                        marker: {
-                            size: reviews.map(review => Math.sqrt(review)),
-                            color: reviews,
-                            colorscale: 'Viridis',
-                            showscale: true
-                        }
-                    };
-                
-                    const chartData = [trace];
-                
-                    const layout = {
-                        title: 'Bubble Chart: Price vs. Review Score (Color-coded by Number of Reviews)',
-                        xaxis: {title: 'Price (TWD)'},
-                        yaxis: {title: 'Review Score'},
-                        showlegend: false
-                    };
-                
-                    Plotly.newPlot('bubble-chart', chartData, layout);
-                
-                    document.getElementById('bubble-chart').on('plotly_click', function(data){
-                        const pointIndex = data.points[0].pointIndex;
-                        const hotelData = filteredData[pointIndex];
-                        const hotelContainer = createHotelContainer(hotelData); // Create hotel container
-                        const hotelsList = document.getElementById('hotels-list');
-                        hotelsList.innerHTML = ''; // Clear previous content
-                        hotelsList.appendChild(hotelContainer); // Append
-                    });
-                }
-                
-});
-    // Price slider functionality
-    const rangeValue = document.querySelector(".slider-container .price-slider");
-    const rangeInputValue = document.querySelectorAll(".range-input input");
-
-    let priceGap = 500;
-
-    const priceInputValue = document.querySelectorAll(".price-input input");
-    for (let i = 0; i < priceInputValue.length; i++) {
-        priceInputValue[i].addEventListener("input", e => {
-            let minp = parseInt(priceInputValue[0].value);
-            let maxp = parseInt(priceInputValue[1].value);
-            let diff = maxp - minp;
-
-            if (minp < 0) {
-                alert("Minimum price cannot be less than 0");
-                priceInputValue[0].value = 0;
-                minp = 0;
-            }
-
-            if (maxp > 10000) {
-                alert("Maximum price cannot be greater than 10000");
-                priceInputValue[1].value = 10000;
-                maxp = 10000;
-            }
-
-            if (minp > maxp - priceGap) {
-                priceInputValue[0].value = maxp - priceGap;
-                minp = maxp - priceGap;
-
-                if (minp < 0) {
-                    priceInputValue[0].value = 0;
-                    minp = 0;
-                }
-            }
-
-            if (diff >= priceGap && maxp <= rangeInputValue[1].max) {
-                if (e.target.className === "min-input") {
-                    rangeInputValue[0].value = minp;
-                    let value1 = rangeInputValue[0].max;
-                    rangeValue.style.left = `${(minp / value1) * 100}%`;
-                } else {
-                    rangeInputValue[1].value = maxp;
-                    let value2 = rangeInputValue[1].max;
-                    rangeValue.style.right = `${100 - (maxp / value2) * 100}%`;
-                }
-            }
-        });
-    }
-
-    for (let i = 0; i < rangeInputValue.length; i++) {
-        rangeInputValue[i].addEventListener("input", e => {
-            let minVal = parseInt(rangeInputValue[0].value);
-            let maxVal = parseInt(rangeInputValue[1].value);
-            let diff = maxVal - minVal;
-
-            if (diff < priceGap) {
-                if (e.target.className === "min-range") {
-                    rangeInputValue[0].value = maxVal - priceGap;
-                } else {
-                    rangeInputValue[1].value = minVal + priceGap;
+                    rangeInputs[1].value = minVal + priceGap;
                 }
             } else {
-                priceInputValue[0].value = minVal;
-                priceInputValue[1].value = maxVal;
-                rangeValue.style.left = `${(minVal / rangeInputValue[0].max) * 100}%`;
-                rangeValue.style.right = `${100 - (maxVal / rangeInputValue[1].max) * 100}%`;
+                priceInputs[0].value = minVal;
+                priceInputs[1].value = maxVal;
+            }
+            filterData();
+        });
+    });
+
+    priceInputs.forEach(input => {
+        input.addEventListener("input", e => {
+            let minPrice = parseInt(priceInputs[0].value);
+            let maxPrice = parseInt(priceInputs[1].value);
+            if ((maxPrice - minPrice >= priceGap) && maxPrice <= 10000) {
+                if (e.target.className === "min-input") {
+                    rangeInputs[0].value = minPrice;
+                } else {
+                    rangeInputs[1].value = maxPrice;
+                }
+                filterData();
             }
         });
+    });
+                
+    function filterData() {
+        const selectedCity = document.getElementById('place-select').value;
+        const minPrice = parseFloat(priceInputs[0].value);
+        const maxPrice = parseFloat(priceInputs[1].value);
+        createChart(data);
     }
-    
-        
+                
+    function createChart(filteredData) {
+        const prices = [];
+        const scores = [];
+        const reviews = [];
+        const hotels = [];
+        const hyperlinks = [];
 
+        filteredData.forEach(item => {
+            prices.push(parseFloat(item.Price));
+            scores.push(parseFloat(item.Review));
+            reviews.push(parseInt(item['Review Number']));
+            hotels.push(item['Hotel Name']);
+            hyperlinks.push(item.hyperlink);
+        });
+
+        const trace = {
+            x: prices,
+            y: scores,
+            text: hotels,
+            mode: 'markers',
+            marker: {
+                size: reviews.map(review => Math.sqrt(review)),
+                color: reviews,
+                colorscale: 'Viridis',
+                showscale: true
+            }
+        };
+
+        const chartData = [trace];
+
+        const layout = {
+            title: 'Bubble Chart: Price vs. Review Score (Color-coded by Number of Reviews)',
+            xaxis: {title: 'Price (TWD)'},
+            yaxis: {title: 'Review Score'},
+            showlegend: false
+        };
+
+        Plotly.newPlot('bubble-chart', chartData, layout);
+
+        document.getElementById('bubble-chart').on('plotly_click', function(data){
+            const pointIndex = data.points[0].pointIndex;
+            const hotelData = filteredData[pointIndex];
+            const hotelContainer = createHotelContainer(hotelData); // Create hotel container
+            const hotelsList = document.getElementById('hotels-list');
+            hotelsList.innerHTML = ''; // Clear previous content
+            hotelsList.appendChild(hotelContainer); // Append
+        });
+    }
+});
